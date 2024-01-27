@@ -9,24 +9,42 @@
  * Sciences, Binghamton University.
  */
 
+#include "dll.h"
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct
+/*
+ * Reference used for taking a numerically value of a pointer and XOR'ing:
+ *    https://stackoverflow.com/questions/26569728/using-xor-with-pointers-in-c.
+ * function so you don't have to write the double cast everywhere, it's ugly...
+ * ptr (pointer) + xor => ptxor
+ */
+struct xdll_node *ptxor(struct xdll_node *aptr, struct xdll_node *bptr)
 {
-   int elem;              // node element
-   struct xdll_node *nxp; // next xor pointer
-} xdll_node;
+   return (struct xdll_node *)((uintptr_t)aptr ^ (uintptr_t)bptr);
+}
+
+/*
+ * Swap two pointers within the XDLL.
+ * swap + xor => swxorp
+ */
+void swxorp(struct xdll_node* aptr, struct xdll_node* bptr)
+{
+   aptr = ptxor(aptr, bptr);
+   bptr = ptxor(bptr, aptr); 
+   aptr = ptxor(aptr, bptr);
+}
 
 /*
  * Creates a new XDLL given a list size and a max number an element can be.
  * While this function is not part of the requirement, it is provided as a
  * convient function for debugging.
  */
-xdll_node *new_xdll(size_t size, int32_t max)
+struct xdll_node *new_xdll(size_t size, int32_t max)
 {
-   xdll_node *curr = NULL;
-   xdll_node *prev = NULL;
+   struct xdll_node *head = NULL;
+   struct xdll_node *curr = NULL;
+   struct xdll_node *prev = NULL;
 
    for (size_t i = 0; i < size; ++i)
    {
@@ -34,44 +52,38 @@ xdll_node *new_xdll(size_t size, int32_t max)
 
       if (!curr)
       {
-         curr = (xdll_node *)malloc(sizeof(xdll_node));
+         curr = (struct xdll_node *)malloc(sizeof(struct xdll_node));
          curr->elem = val;
-         continue;
+         head = curr;
       }
-
-      // assuming curr is already memory allocated...
-      xdll_node *next = (xdll_node *)malloc(sizeof(xdll_node));
-      next->elem = val;
-      curr->nxp = (uintptr_t)prev ^ (uintptr_t)next;
-      prev = curr;
-      curr = next;
+      else
+      {
+         // assuming curr is already memory allocated...
+         struct xdll_node *next = (struct xdll_node *)malloc(sizeof(struct xdll_node));
+         next->elem = val;
+         next->nxp  = ptxor(curr, NULL);
+         // https://stackoverflow.com/questions/26569728
+         // using-xor-with-pointers-in-c
+         curr->nxp = ptxor(prev, next);
+         prev = curr;
+         curr = next;
+         
+      }
    }
+   return head;
 }
 
-void display(xdll_node *node)
+void display(struct xdll_node *node)
 {
    printf("%d -> ", node->elem);
 }
 
 /*
- * Convience function for free an entire list. Calls out to xdll iterator along
- * along with passing the callback pointer to #free_xdll(struct xdll_node*).
+ * Convience function for freeing nodes.
  */
-void free_node(xdll_node *node)
+void free_xdll(struct xdll_node *node)
 {
    free(node);
-}
-
-void free(xdll_node *list)
-{
-   iter(list, free_node);
-}
-
-void xor_swap(int *a, int *b)
-{
-   *a = *a ^ *b;
-   *b = *b ^ *a;
-   *a = *a ^ *b;
 }
 
 /*
@@ -79,11 +91,17 @@ void xor_swap(int *a, int *b)
  * Internally iterates over the list, and for each node, pass the node into the
  * callback.
  */
-void iter(xdll_node *list, void (*iter_fn)(xdll_node *elem))
+void iter(struct xdll_node *list, void (*iter_fn)(struct xdll_node *elem))
 {
-   xdll_node *node_pt = list;
+   struct xdll_node *prev_pt = NULL;
+   struct xdll_node *node_pt = list;
    while (node_pt)
    {
+      iter_fn(node_pt);
+
+      struct xdll_node *next = ptxor(prev_pt, node_pt->nxp);
+      prev_pt = node_pt;
+      node_pt = next;
    }
 }
 
@@ -91,14 +109,28 @@ void iter(xdll_node *list, void (*iter_fn)(xdll_node *elem))
  * Rotate the back of the list to the head.
  * Returns the new head.
  */
-xdll_node *rotate(xdll_node *head)
+struct xdll_node *rotate(struct xdll_node *head)
 {
+   // struct xdll_node *prev_pt = NULL;
+   // struct xdll_node *node_pt = head;
+   // while (node_pt)
+   // {
+   //    swxorp()
+
+   //    struct xdll_node *next = ptxor(prev_pt, node_pt->nxp);
+   //    prev_pt = node_pt;
+   //    node_pt = next;
+   // }
+   return head;
 }
 
-void main(void)
+int main(void)
 {
-   xdll_node *list = new_xdll(10, 100);
+   struct xdll_node *list = new_xdll(3, 100);
 
-   free(list);
+   iter(list, display);
+
+   free_xdll(list);
+
    return 0;
 }
