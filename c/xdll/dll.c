@@ -127,10 +127,7 @@ struct xdll_node *rotate(struct xdll_node *head)
 int main(void)
 {
    struct xdll_node *list = new_xdll(3, 100);
-
    iter(list, display);
-
    free_xdll(list);
-
    return 0;
 }
