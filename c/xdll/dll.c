@@ -42,48 +42,48 @@ void swxorp(struct xdll_node* aptr, struct xdll_node* bptr)
  */
 struct xdll_node *new_xdll(size_t size, int32_t max)
 {
-   struct xdll_node *head = NULL;
-   struct xdll_node *curr = NULL;
-   struct xdll_node *prev = NULL;
+   struct xdll_node *head_pt = NULL;
+   struct xdll_node *curr_pt = NULL;
+   struct xdll_node *prev_pt = NULL;
 
    for (size_t i = 0; i < size; ++i)
    {
       int val = rand() % max;
 
-      if (!curr)
+      if (!curr_pt)
       {
-         curr = (struct xdll_node *)malloc(sizeof(struct xdll_node));
-         curr->elem = val;
-         head = curr;
+         curr_pt = (struct xdll_node *)malloc(sizeof(struct xdll_node));
+         curr_pt->elem = val;
+         head_pt = curr_pt;
       }
       else
       {
          // assuming curr is already memory allocated...
-         struct xdll_node *next = (struct xdll_node *)malloc(sizeof(struct xdll_node));
-         next->elem = val;
-         next->nxp  = ptxor(curr, NULL);
+         struct xdll_node *next_pt = (struct xdll_node *)malloc(sizeof(struct xdll_node));
+         next_pt->elem = val;
+         next_pt->nxp  = ptxor(curr_pt, NULL);
          // https://stackoverflow.com/questions/26569728
          // using-xor-with-pointers-in-c
-         curr->nxp = ptxor(prev, next);
-         prev = curr;
-         curr = next;
+         curr_pt->nxp = ptxor(prev_pt, next_pt);
+         prev_pt = curr_pt;
+         curr_pt = next_pt;
          
       }
    }
-   return head;
+   return head_pt;
 }
 
-void display(struct xdll_node *node)
+void display(struct xdll_node *node_pt)
 {
-   printf("%d -> ", node->elem);
+   printf("%d -> ", node_pt->elem);
 }
 
 /*
  * Convience function for freeing nodes.
  */
-void free_xdll(struct xdll_node *node)
+void free_xdll(struct xdll_node *node_pt)
 {
-   free(node);
+   free(node_pt);
 }
 
 /*
@@ -99,9 +99,9 @@ void iter(struct xdll_node *list, void (*iter_fn)(struct xdll_node *elem))
    {
       iter_fn(node_pt);
 
-      struct xdll_node *next = ptxor(prev_pt, node_pt->nxp);
+      struct xdll_node *next_pt = ptxor(prev_pt, node_pt->nxp);
       prev_pt = node_pt;
-      node_pt = next;
+      node_pt = next_pt;
    }
 }
 
@@ -109,25 +109,44 @@ void iter(struct xdll_node *list, void (*iter_fn)(struct xdll_node *elem))
  * Rotate the back of the list to the head.
  * Returns the new head.
  */
-struct xdll_node *rotate(struct xdll_node *head)
+struct xdll_node *rotate(struct xdll_node *head_pt)
 {
-   // struct xdll_node *prev_pt = NULL;
-   // struct xdll_node *node_pt = head;
-   // while (node_pt)
-   // {
-   //    swxorp()
+   struct xdll_node* node;
 
-   //    struct xdll_node *next = ptxor(prev_pt, node_pt->nxp);
-   //    prev_pt = node_pt;
-   //    node_pt = next;
-   // }
-   return head;
+
+
+   struct xdll_node *prev_pt = NULL;
+   struct xdll_node *node_pt = head_pt;
+   struct xdll_node *next_pt = ptxor(prev_pt, node_pt); 
+   do
+   {
+      next_pt = ptxor(prev_pt, node_pt); 
+      prev_pt = node_pt;
+      node_pt = next_pt;
+   } while (next_pt);
+
+   head_pt = node_pt;
+
+   printf("%p", head_pt);
+   
+   next_pt = NULL;
+   prev_pt = NULL;
+
+   do 
+   {
+      next_pt = ptxor(prev_pt, node_pt); 
+      prev_pt = node_pt;
+      node_pt = next_pt;
+   } while (next_pt); 
+
+   return head_pt;
 }
 
 int main(void)
 {
    struct xdll_node *list = new_xdll(3, 100);
    iter(list, display);
+   iter(rotate(list), display);
    free_xdll(list);
    return 0;
 }

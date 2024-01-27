@@ -51,21 +51,45 @@ struct Expr *mk_float(float f) {
  * using the above constructors.
  */
 struct Expr *mk_expr1() {
-    // TODO: Your code goes here
+    struct Expr* var1 = mk_float(2);
+    struct Expr* var2 = mk_float(5);
+    struct Expr* res1 = mk_times(var1, var2);
+    struct Expr* var3 = mk_float(3);
+    struct Expr* res2 = mk_plus(var3, res1);
+
+    return res2;
 }
 
 /* This function should create the expr ((1 / 2) + (3 / 8))
  * using the above constructors.
  */
 struct Expr *mk_expr2() {
-    // TODO: Your code goes here
+    struct Expr* var1 = mk_float(1);
+    struct Expr* var2 = mk_float(2);
+    struct Expr* res1 = mk_div(var1, var2);
+
+   struct Expr* var3 = mk_float(3);
+   struct Expr* var4 = mk_float(8);
+   struct Expr* res2 = mk_div(var3, var4);
+
+   return mk_plus(res1, res2);
 }
 
 /* This function should create the expr ((1 / 2) - (4 / (2 + 3)))
  * using the above constructors.
  */
 struct Expr *mk_expr3() {
-    // TODO: Your code goes here
+    struct Expr* var1 = mk_float(2);
+    struct Expr* var2 = mk_float(3);
+    struct Expr* res1 = mk_plus(var1, var2);
+    struct Expr* var3 = mk_float(4);
+    struct Expr* res2 = mk_div(var3, res1);
+
+    struct Expr* var4 = mk_float(1);
+    struct Expr* var5 = mk_float(2);
+    struct Expr* res3 = mk_div(var4, var5);
+
+    return mk_minus(res3, res2);
 }
 
 
@@ -74,7 +98,15 @@ struct Expr *mk_expr3() {
  * with the given AST.
 */
 void free_expr(struct Expr *e) {
-    // TODO: Your code goes here
+   // TODO: this needs to be recursive.
+    if (e->subexprs.e1) {
+       free(e->subexprs.e1);
+    }
+    if (e->subexprs.e2) {
+       free(e->subexprs.e2);
+    }
+    free(e);
+
 }
 
 /*
@@ -82,7 +114,21 @@ void free_expr(struct Expr *e) {
  * return the floating-point result.
 */
 float eval(struct Expr *e) {
-    // TODO: Your code goes here
+   switch (e->type) {
+
+      case PLUS:
+         return eval(e->subexprs.e1) + eval(e->subexprs.e2);
+      case MINUS:
+         return eval(e->subexprs.e1) - eval(e->subexprs.e2);
+      case TIMES:
+         return eval(e->subexprs.e1) * eval(e->subexprs.e2);
+      case DIV:
+         return eval(e->subexprs.e1) / eval(e->subexprs.e2);;
+      case FLOAT:
+         return e->literal;
+   }
+
+   return 0;
 }
 
 
