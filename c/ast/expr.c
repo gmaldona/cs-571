@@ -99,14 +99,13 @@ struct Expr *mk_expr3() {
 */
 void free_expr(struct Expr *e) {
    // TODO: this needs to be recursive.
-    if (e->subexprs.e1) {
-       free(e->subexprs.e1);
+    switch (e->type) {
+      case FLOAT: break;
+      default: 
+         free_expr(e->subexprs.e1);
+         free_expr(e->subexprs.e2);
     }
-    if (e->subexprs.e2) {
-       free(e->subexprs.e2);
-    }
-    free(e);
-
+   free(e);
 }
 
 /*
