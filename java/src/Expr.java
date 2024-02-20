@@ -53,33 +53,88 @@ abstract class BinaryExpr extends Expr {
 }
 
 class PlusExpr extends BinaryExpr {
+    
     public PlusExpr(Expr e1, Expr e2) {
         super(e1, e2);
+    }
+
+    @Override
+    float eval() {
+        return getE1().eval() + getE2().eval(); 
+    }
+
+    @Override
+    boolean equals(Expr other) {
+        return true; 
     }
 }
 
 class MinusExpr extends BinaryExpr {
+    
     public MinusExpr(Expr e1, Expr e2) {
         super(e1, e2);
+    }
+
+    @Override
+    float eval() {
+        return getE1().eval() - getE2().eval(); 
+    }
+
+    @Override
+    boolean equals(Expr other) {
+        return true; 
     }
 }
 
 class TimesExpr extends BinaryExpr {
+    
     public TimesExpr(Expr e1, Expr e2) {
         super(e1, e2);
+    }
+
+    @Override
+    float eval() {
+        return getE1().eval() * getE2().eval(); 
+    }
+
+    @Override
+    boolean equals(Expr other) {
+        return true; 
     }
 }
 
 class DivExpr extends BinaryExpr {
+    
     public DivExpr(Expr e1, Expr e2) {
         super(e1, e2);
+    }
+
+    @Override
+    float eval() {
+        return getE1().eval() / getE2().eval(); 
+    }
+
+    @Override
+    boolean equals(Expr other) {
+        return true; 
     }
 }
 
 class FloatExpr extends Expr {
+    
     private float literal;
 
     public FloatExpr(float f) {
         this.literal = f;
+    }
+
+    @Override
+    float eval() {
+        return literal; 
+    }
+
+    @Override
+    boolean equals(Expr other) {
+        return true; 
     }
 }
