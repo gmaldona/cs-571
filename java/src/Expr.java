@@ -1,5 +1,23 @@
 package src;
 
+abstract class Visitor {
+    abstract Expr visitPlusExpr(PlusExpr expr);
+    abstract Expr visitMinusExpr(MinusExpr expr); 
+}
+
+class VisitorImpl extends Visitor {
+
+    @Override
+    Expr visitPlusExpr(PlusExpr expr) {
+        expr.
+    }
+
+    @Override
+    Expr visitMinusExpr(MinusExpr expr) {
+
+    }
+}
+
 abstract class Expr {
     /*
      *  Part 1: implement the eval function for all
@@ -32,6 +50,9 @@ abstract class Expr {
      * base class Expr with additional methods.
      */
     abstract boolean equals(Expr other);
+
+    abstract void accept(Visitor vistor);
+
 }
 
 abstract class BinaryExpr extends Expr {
@@ -61,6 +82,11 @@ class PlusExpr extends BinaryExpr {
     @Override
     float eval() {
         return getE1().eval() + getE2().eval(); 
+    }
+
+    @Override
+    void accept(Visitor visitor) {
+
     }
 
     @Override
