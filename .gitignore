@@ -1,9 +1,13 @@
+# IDE specific directories
 .idea/
 .vscode/
 
+# MacOS metadata files
 **/*.dSYM/
 .DS_Store
 
+# Submissions to the assignments
+submissions/
 *.docx
 
 **/*.class
