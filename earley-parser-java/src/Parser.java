@@ -14,7 +14,7 @@ public abstract class Parser {
 
     /* Finalize the parser state and return the resulting AST.
      * May return "null" if no AST exists for this input.
-     */
+    */
     abstract Expr finish() throws Exception;
 
     Token[] tokens;

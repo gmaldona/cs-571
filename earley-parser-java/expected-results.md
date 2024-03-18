@@ -30,4 +30,15 @@ Input: 1.0 + 2.0 - 3.0 + 4.0
 Tokens: [NUM("1.0"); WHITE_SPACE(" "); PLUS("+"); WHITE_SPACE(" "); NUM("2.0"); WHITE_SPACE(" "); MINUS("-"); WHITE_SPACE(" "); NUM("3.0"); WHITE_SPACE(" "); PLUS("+"); WHITE_SPACE(" "); NUM("4.0")]
 Tokens without whitespace: [NUM("1.0"); PLUS("+"); NUM("2.0"); MINUS("-"); NUM("3.0"); PLUS("+"); NUM("4.0")]
 (((1.0 + 2.0) - 3.0) + 4.0)
+=======================================
+Start of optional partial-credit tests.
+=======================================
+Input: (1.0 + 2.0 - 3.0
+Tokens: [LPAREN("("); NUM("1.0"); WHITE_SPACE(" "); PLUS("+"); WHITE_SPACE(" "); NUM("2.0"); WHITE_SPACE(" "); MINUS("-"); WHITE_SPACE(" "); NUM("3.0")]
+Tokens without whitespace: [LPAREN("("); NUM("1.0"); PLUS("+"); NUM("2.0"); MINUS("-"); NUM("3.0")]
+Parsing Failed
+Input: (1.0 +) 2.0 - 3.0
+Tokens: [LPAREN("("); NUM("1.0"); WHITE_SPACE(" "); PLUS("+"); RPAREN(")"); WHITE_SPACE(" "); NUM("2.0"); WHITE_SPACE(" "); MINUS("-"); WHITE_SPACE(" "); NUM("3.0")]
+Tokens without whitespace: [LPAREN("("); NUM("1.0"); PLUS("+"); RPAREN(")"); NUM("2.0"); MINUS("-"); NUM("3.0")]
+Parsing Failed
 ```

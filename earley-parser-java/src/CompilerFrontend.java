@@ -27,7 +27,7 @@ public abstract class CompilerFrontend {
         }
     }
 
-    public Expr run(String input) {
+    public Expr run(String input) throws Exception {
         init_lexer();
 
         if (debug) {
@@ -46,9 +46,9 @@ public abstract class CompilerFrontend {
             System.out.println("Tokens without whitespace: " + tokens_nows.toString());
         }
 
-//        Expr e = parse.parse(tokens_nows);
+        Expr e = parse.parse(tokens_nows);
 
-        return null;
+        return e;
     }
 
     /*

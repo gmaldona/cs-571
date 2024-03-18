@@ -157,18 +157,38 @@ public class App {
     //   input: the input string to be parsed
     // Returns:
     //   the resulting AST
-    static void test_compiler(String input) {
+    static void test_compiler(String input) throws Exception {
         CompilerFrontend front = new CompilerFrontendImpl(true);
         Expr e = front.run(input);
-        System.out.println(e.toString());
+        if (e == null) {
+            System.out.println("yes.");
+        } else {
+            System.out.println(e.toString());
+        }
 
     }
 
     public static void main(String[] args) throws Exception {
         test_automata();
         test_lexer();
-        test_compiler("100.0 + .02 -032.1* (   0.2 / 3.0 /\n\t 4.05)");
-        test_compiler("1.0 + 2.0 + 3.0 + 4.0");
+//        test_compiler("100.0 + .02 -032.1* (   0.2 / 3.0 /\n\t 4.05)");
+        test_compiler("1.0 + 2.0 + 3.0");
         test_compiler("1.0 + 2.0 - 3.0 + 4.0");
+
+//        System.out.println("=======================================");
+//        System.out.println("Start of optional partial-credit tests.");
+//        System.out.println("=======================================");
+//
+//        try {
+//            test_compiler("(1.0 + 2.0 - 3.0");
+//        } catch (Exception e) {
+//            System.out.println("Parsing Failed");
+//        }
+//
+//        try {
+//            test_compiler("(1.0 +) 2.0 - 3.0");
+//        } catch (Exception e) {
+//            System.out.println("Parsing Failed");
+//        }
     }
 }

@@ -2,12 +2,29 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.Array;
 import java.util.*;
 
-public class  ParserImpl extends Parser {
+public class ParserImpl extends Parser {
     private Map<Integer, List<ParseState>> earleyTable;
     private Production[] productions;
 
     private final static Production START_PROD = Grammar.getProductions()[0];
 
+//    public static class BinaryExprImpl extends BinaryExpr {
+//
+//        protected BinaryExprImpl(Expr e1, Expr e2) {
+//            super(e1, e2);
+//        }
+//
+//        public BinaryExpr cast(Class<? extends BinaryExpr> expr) throws
+//              NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+//            return expr.getConstructor(expr).newInstance(getE1(), getE2());
+//        }
+//
+//
+//        @Override
+//        public String toString() {
+//            return null;
+//        }
+//    }
 
     /**
      * S   -> S + T
