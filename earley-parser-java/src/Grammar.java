@@ -1,4 +1,6 @@
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 /*
  * The classes in this file provide an object-oriented implementation
@@ -13,7 +15,6 @@ import java.util.Objects;
  *   AddOp -> MINUS
  *   MulOp -> TIMES
  *   MulOp -> DIV
- * 
  *   The terminals NUM, LPAREN, RPAREN, PLUS, MINUS, TIMES, and DIV are defined in "Lexer.java".
  */
 
@@ -144,7 +145,7 @@ public class Grammar {
             productions[0].setRhs(0, Nonterminal.T);
             productions[0].setRhs(1, Nonterminal.AddOp);
             productions[0].setRhs(2, Nonterminal.F);
-            
+
             // T -> F
             productions[1] = new Production(Nonterminal.T, 1);
             productions[1].setRhs(0, Nonterminal.F);
@@ -186,6 +187,10 @@ public class Grammar {
             productions[9].setRhs(0, TokenType.DIV);
         }
         return productions;
+    }
+
+    public static Stream<Production> stream() {
+        return Arrays.stream(productions);
     }
 
     public static String staticToString() {

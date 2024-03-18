@@ -46,9 +46,9 @@ public abstract class CompilerFrontend {
             System.out.println("Tokens without whitespace: " + tokens_nows.toString());
         }
 
-        Expr e = parse.parse(tokens_nows);
+//        Expr e = parse.parse(tokens_nows);
 
-        return e;
+        return null;
     }
 
     /*

@@ -1,6 +1,4 @@
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Objects;
+import java.util.*;
 
 public class AutomatonImpl implements Automaton {
 
@@ -45,10 +43,15 @@ public class AutomatonImpl implements Automaton {
     @Override
     public void addTransition(int s_initial, char label, int s_final) {
         StateLabelPair p = new StateLabelPair(s_initial, label);
-        if (! transitions.containsKey(p)) {
-            transitions.put(p, new HashSet<>());
+        for (StateLabelPair P : transitions.keySet()) {
+            if (P.equals(p)) {
+                transitions.get(p).add(s_final);
+                return;
+            }
         }
-        transitions.get(p).add(s_final);
+        HashSet<Integer> s = new HashSet<>();
+        s.add(s_final);
+        transitions.put(p, s);
     }
 
     @Override
@@ -88,6 +91,7 @@ public class AutomatonImpl implements Automaton {
                 if (pair.equals(transition_pair)) {
                     return true;
                 }
+
             }
         }
         return false;

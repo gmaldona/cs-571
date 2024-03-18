@@ -14,8 +14,8 @@ public abstract class Parser {
 
     /* Finalize the parser state and return the resulting AST.
      * May return "null" if no AST exists for this input.
-    */
-    abstract Expr finish();
+     */
+    abstract Expr finish() throws Exception;
 
     Token[] tokens;
 
@@ -23,7 +23,7 @@ public abstract class Parser {
     public Parser() {}
 
 
-    Expr parse(TokenList token_list) {
+    Expr parse(TokenList token_list) throws Exception {
         // Copy the token list into an array
         int num_tokens = token_list.length();
         tokens = new Token[token_list.length()];
