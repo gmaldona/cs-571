@@ -48,16 +48,19 @@ public class ParserImpl extends Parser {
             if (state.ast.size() == 3) {
                 switch (state.ast.get(1).getProduction().getRhsTokenType(0)) {
                     case PLUS -> {
-                        return new PlusExpr(eval(state.ast.get(2), tokens), eval(state.ast.get(0), tokens));
+                        return new PlusExpr(eval(state.ast.get(0), tokens), eval(state.ast.get(2), tokens));
                     }
                     case MINUS -> {
-                        return new MinusExpr(eval(state.ast.get(2), tokens), eval(state.ast.get(0), tokens));
+                        return new MinusExpr(eval(state.ast.get(0), tokens), eval(state.ast.get(2), tokens));
                     }
                     case TIMES -> {
-                        return new TimesExpr(eval(state.ast.get(2), tokens), eval(state.ast.get(0), tokens));
+                        return new TimesExpr(eval(state.ast.get(0), tokens), eval(state.ast.get(2), tokens));
                     }
                     case DIV -> {
-                        return new DivExpr(eval(state.ast.get(2), tokens), eval(state.ast.get(0), tokens));
+                        return new DivExpr(eval(state.ast.get(0), tokens), eval(state.ast.get(2), tokens));
+                    }
+                    case LPAREN -> {
+                        return eval(state.ast.get(1), tokens);
                     }
                 }
             } else if (state.ast.size() == 1) {
@@ -254,6 +257,63 @@ public class ParserImpl extends Parser {
         }
     }
 
+    private Stack<ParseState> recursiveFinish(ParseState state, int tableIndex) {
+        if (state.getProduction().isRhsTokenType(state.index - 1)) {
+            TokenType stateTokenType = state.getProduction().getRhsTokenType(state.index - 1);
+            if (stateTokenType.equals(TokenType.NUM)) {
+                Stack<ParseState> results = new Stack<>();
+                results.push(state);
+                return results;
+            } else if (stateTokenType.equals(TokenType.RPAREN)) {
+                Stack<ParseState> results = new Stack<>();
+
+                List<ParseState> previousTable = earleyTable.get(tableIndex - 1);
+                for (ParseState s : previousTable) {
+                    if (s.index > 1 && state.getProduction().equals(s.getProduction()) && s.index == state.index - 1) {
+                        recursiveFinish(s, tableIndex - 1);
+                        results = s.ast;
+                    }
+                }
+//                state.ast = results;
+                return results;
+            }
+        }
+
+        ParseState result = null;
+        for (ParseState s : earleyTable.get(tableIndex)) {
+            if (s.isCompleted() && state.getProduction().isRhsNonterminal(state.index - 1) &&
+                  state.getProduction().getRhsNonterminal(state.index - 1).equals(s.production.lhs)) {
+                result = s;
+                break;
+            }
+        }
+
+        Stack<ParseState> results = new Stack<>();
+        if (state.getProduction().rhsLength() > 1 && tableIndex > 0) {
+            for (ParseState s : earleyTable.get(tableIndex - 1)) {
+                if (s.index > 1 && state.getProduction().equals(s.getProduction()) && s.index == state.index - 1) {
+                    recursiveFinish(s, tableIndex - 1);
+                    results = s.ast;
+                }  else if (s.index == 1 && state.getProduction().equals(s.getProduction()) && s.index == state.index - 1) {
+                    recursiveFinish(s, tableIndex - 1);
+                    results = s.ast;
+                }
+            }
+        }
+        if (result != null) {
+            results.addAll(recursiveFinish(result, tableIndex));
+        }
+        state.ast.addAll(results);
+
+        Stack<ParseState> ast = new Stack<>();
+        ast.push(state);
+        return ast;
+    }
+
+    private void recursiveFinish(ParseState state) {
+        recursiveFinish(state, earleyTable.size() - 1);
+    }
+
     @Override
     void complete(int i) {
         List<ParseState> states = new ArrayList<>(earleyTable.get(i + 1));
@@ -282,52 +342,9 @@ public class ParserImpl extends Parser {
         }
 
         ParseState state = hasFinalState.get();
-        int table = earleyTable.size() - 1;
-        int index = state.index - 1;
 
-        while (table > 0) {
-
-            ParseState startState = state;
-            int _index = index;
-
-            while (_index >= 0 && state.production.isRhsNonterminal(_index)) {
-                ParseState _state = state;
-
-                int __index = _index;
-                var s = earleyTable.get(table).stream()
-                      .filter(ParseState::isCompleted)
-                      .filter(_s -> _state.getProduction().getRhsNonterminal(__index).equals(_s.production.lhs))
-                      .findFirst()
-                      .get();
-
-                state.ast.push(s);
-                state = s;
-                _index = state.index - 1;
-            }
-
-            state = startState;
-
-            for (ParseState s : earleyTable.get(table - 1)) {
-                if (s.production.equals(state.production) && s.index == index && s.index == 1) {
-                    ParseState _state = state;
-                    int _Index = index;
-
-                    Optional<ParseState> derived = earleyTable.get(table - 1).stream()
-                          .filter(_s -> _state.getProduction().getRhsNonterminal(_Index - 1).equals(_s.production.lhs))
-                          .filter(_s -> _s.index != _Index)
-                          .findFirst();
-                    if (derived.isPresent()) {
-                        state.ast.push(derived.get());
-                        state = derived.get();
-                        index = state.index;
-                    }
-                }
-            }
-            index --;
-            table --;
-        }
-
-        return SDT.eval(hasFinalState.get(), tokens);
+        recursiveFinish(state);
+        return SDT.eval(state, tokens);
     }
 
 }

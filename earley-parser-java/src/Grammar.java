@@ -23,6 +23,7 @@ import java.util.stream.Stream;
  * An enum representing nonterminals
  */
 enum Nonterminal {
+    S,
     T,
     F,
     Lit,
@@ -138,53 +139,55 @@ public class Grammar {
     private static Production[] productions = null;
     public static Production[] getProductions() {
         if(productions == null) {
-            productions = new Production[10];
+            productions = new Production[11];
+            productions[0] = new Production(Nonterminal.S, 1);
+            productions[0].setRhs(0, Nonterminal.T);
 
             // T -> T AddOp F
-            productions[0] = new Production(Nonterminal.T, 3);
-            productions[0].setRhs(0, Nonterminal.T);
-            productions[0].setRhs(1, Nonterminal.AddOp);
-            productions[0].setRhs(2, Nonterminal.F);
+            productions[1] = new Production(Nonterminal.T, 3);
+            productions[1].setRhs(0, Nonterminal.T);
+            productions[1].setRhs(1, Nonterminal.AddOp);
+            productions[1].setRhs(2, Nonterminal.F);
 
             // T -> F
-            productions[1] = new Production(Nonterminal.T, 1);
-            productions[1].setRhs(0, Nonterminal.F);
+            productions[2] = new Production(Nonterminal.T, 1);
+            productions[2].setRhs(0, Nonterminal.F);
 
             // F -> F MulOp Lit
-            productions[2] = new Production(Nonterminal.F, 3);
-            productions[2].setRhs(0, Nonterminal.F);
-            productions[2].setRhs(1, Nonterminal.MulOp);
-            productions[2].setRhs(2, Nonterminal.Lit);
+            productions[3] = new Production(Nonterminal.F, 3);
+            productions[3].setRhs(0, Nonterminal.F);
+            productions[3].setRhs(1, Nonterminal.MulOp);
+            productions[3].setRhs(2, Nonterminal.Lit);
 
             // F -> Lit
-            productions[3] = new Production(Nonterminal.F, 1);
-            productions[3].setRhs(0, Nonterminal.Lit);
+            productions[4] = new Production(Nonterminal.F, 1);
+            productions[4].setRhs(0, Nonterminal.Lit);
 
             // Lit -> num
-            productions[4] = new Production(Nonterminal.Lit, 1);
-            productions[4].setRhs(0, TokenType.NUM);
+            productions[5] = new Production(Nonterminal.Lit, 1);
+            productions[5].setRhs(0, TokenType.NUM);
 
             // Lit -> lparen T rparen
-            productions[5] = new Production(Nonterminal.Lit, 3);
-            productions[5].setRhs(0, TokenType.LPAREN);
-            productions[5].setRhs(1, Nonterminal.T);
-            productions[5].setRhs(2, TokenType.RPAREN);
+            productions[6] = new Production(Nonterminal.Lit, 3);
+            productions[6].setRhs(0, TokenType.LPAREN);
+            productions[6].setRhs(1, Nonterminal.T);
+            productions[6].setRhs(2, TokenType.RPAREN);
 
             // AddOp -> plus
-            productions[6] = new Production(Nonterminal.AddOp, 1);
-            productions[6].setRhs(0, TokenType.PLUS);
+            productions[7] = new Production(Nonterminal.AddOp, 1);
+            productions[7].setRhs(0, TokenType.PLUS);
 
             // AddOp -> minus
-            productions[7] = new Production(Nonterminal.AddOp, 1);
-            productions[7].setRhs(0, TokenType.MINUS);
+            productions[8] = new Production(Nonterminal.AddOp, 1);
+            productions[8].setRhs(0, TokenType.MINUS);
 
             // MulOp -> times
-            productions[8] = new Production(Nonterminal.MulOp, 1);
-            productions[8].setRhs(0, TokenType.TIMES);
+            productions[9] = new Production(Nonterminal.MulOp, 1);
+            productions[9].setRhs(0, TokenType.TIMES);
 
             // MulOp -> div
-            productions[9] = new Production(Nonterminal.MulOp, 1);
-            productions[9].setRhs(0, TokenType.DIV);
+            productions[10] = new Production(Nonterminal.MulOp, 1);
+            productions[10].setRhs(0, TokenType.DIV);
         }
         return productions;
     }
