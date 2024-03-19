@@ -48,7 +48,10 @@ public class ParserImpl extends Parser {
             if (state.ast.size() == 3) {
                 switch (state.ast.get(1).getProduction().getRhsTokenType(0)) {
                     case PLUS -> {
-                        return new PlusExpr(eval(state.ast.get(0), tokens), eval(state.ast.get(2), tokens));
+                        var e2 = eval(state.ast.get(2), tokens);
+                        var e1 =eval(state.ast.get(0), tokens);
+                        var t = new PlusExpr(e1, e2);
+                        return t;
                     }
                     case MINUS -> {
                         return new MinusExpr(eval(state.ast.get(0), tokens), eval(state.ast.get(2), tokens));
@@ -63,16 +66,8 @@ public class ParserImpl extends Parser {
                         return eval(state.ast.get(1), tokens);
                     }
                 }
-            } else if (state.ast.size() == 1) {
-                switch (tokens[state.initLabel].ty) {
-                    case NUM -> {
-                        return eval(state.ast.get(0), tokens);
-                    }
-                }
-
             }
-
-            return null;
+            return eval(state.ast.get(0), tokens);
         }
     }
 
@@ -223,20 +218,10 @@ public class ParserImpl extends Parser {
 
     @Override
     void scan(int i) {
-//        List<ParseState> results = new ArrayList<>(
-//              earleyTable.get(i)
-//                    .stream()
-//                    .filter(ParseState::isTokenType)
-//                    .filter(s -> tokens[i].ty.name().equals(s.getTokenType().name()))
-//                    .map(ParseState::new)
-//                    .map(ParseState::increment)
-//                    .toList());
-
         List<ParseState> results = new ArrayList<>();
         for (ParseState state : earleyTable.get(i)) {
             if (state.isTokenType() && tokens[i].ty.equals(state.getTokenType())) {
                 ParseState s = new ParseState(state);
-
                 results.add(s.increment());
             }
         }
@@ -274,7 +259,6 @@ public class ParserImpl extends Parser {
                         results = s.ast;
                     }
                 }
-//                state.ast = results;
                 return results;
             }
         }
@@ -290,13 +274,22 @@ public class ParserImpl extends Parser {
 
         Stack<ParseState> results = new Stack<>();
         if (state.getProduction().rhsLength() > 1 && tableIndex > 0) {
-            for (ParseState s : earleyTable.get(tableIndex - 1)) {
-                if (s.index > 1 && state.getProduction().equals(s.getProduction()) && s.index == state.index - 1) {
-                    recursiveFinish(s, tableIndex - 1);
-                    results = s.ast;
-                }  else if (s.index == 1 && state.getProduction().equals(s.getProduction()) && s.index == state.index - 1) {
-                    recursiveFinish(s, tableIndex - 1);
-                    results = s.ast;
+            boolean found = false;
+            for (int index = tableIndex - 1; index >= 0 && !found; index--) {
+                for (ParseState s : earleyTable.get(index)) {
+                    if (s.initLabel == state.initLabel) {
+                        if (s.index > 1 && state.getProduction().equals(s.getProduction()) && s.index == state.index - 1) {
+                            recursiveFinish(s, index);
+                            results = s.ast;
+                            found = true;
+                            break;
+                        } else if (s.index == 1 && state.getProduction().equals(s.getProduction()) && s.index == state.index - 1) {
+                            recursiveFinish(s, index);
+                            results = s.ast;
+                            found = true;
+                            break;
+                        }
+                    }
                 }
             }
         }

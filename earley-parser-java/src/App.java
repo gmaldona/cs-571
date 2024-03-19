@@ -171,9 +171,10 @@ public class App {
     public static void main(String[] args) throws Exception {
         test_automata();
         test_lexer();
-//        test_compiler("100.0 + .02 -032.1* (   0.2 / 3.0 /\n\t 4.05)");
+        test_compiler("100.0 + .02 -032.1* (   0.2 / 3.0 /\n\t 4.05)");
         test_compiler("1.0 + 2.0 + 3.0");
         test_compiler("1.0 + 2.0 - 3.0 + 4.0");
+        test_compiler("1 + (2 + (3 * (4 / 5)))");
 
 //        System.out.println("=======================================");
 //        System.out.println("Start of optional partial-credit tests.");
