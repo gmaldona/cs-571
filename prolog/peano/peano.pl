@@ -17,8 +17,13 @@ mul(s(N), M, Y) :-
 %%%%%%%%%%%%%%%%%%%%%%
 % Your code goes here:
 %%%%%%%%%%%%%%%%%%%%%%
+sub(N, 0, N) :- is_number(N).
+sub(s(N), s(M), Y) :- sub(N, M, Y).
 
-div(X, Y, Z, R) :- ???
+% if Y > X &&  have negative numbers s
+div(R, Y, Z, R) :- not(sub(R, Y, _)), is_number(Z).
+
+div(X, Y, s(Z), R) :- sub(X, Y, Q), div(Q, Y, Z, R).
 
 % Example execution:
 % swipl peano.pl
