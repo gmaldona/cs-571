@@ -1,15 +1,15 @@
-
 %%%%%%%%%%%%%%%%%
 % Your code here:
 %%%%%%%%%%%%%%%%%
-
-lines --> line, ";", lines.
+lines --> line, semi, lines.
 lines --> line.
-line --> num, ",", line. 
+line --> num, comma, line. 
 line --> num.
-num --> digit, num.
 num --> digit.
+num --> digit, num.
 
+semi  --> [';'].
+comma --> [','].
 digit --> ['0'].
 digit --> ['1'].
 digit --> ['2'].
@@ -21,12 +21,12 @@ digit --> ['7'].
 digit --> ['8'].
 digit --> ['9']. 
 
-parse(X) :- phrase(lines, X, _). 
+parse(X) :- phrase(lines, X). 
 
 % Example execution:
 % ?- parse(['3', '2', ',', '0', ';', '1', ',', '5', '6', '7', ';', '2']).
 % true.
-% ?- parse(['3', '2', ',', '0', ';', '1', ',', '5', '6', '7', ';', '2' ',']).
+% ?- parse(['3', '2', ',', '0', ';', '1', ',', '5', '6', '7', ';', '2', ',']).
 % false.
 % ?- parse(['3', '2', ',', ';', '0']).
 % false.
