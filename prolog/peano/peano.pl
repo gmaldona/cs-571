@@ -20,7 +20,7 @@ mul(s(N), M, Y) :-
 sub(N, 0, N) :- is_number(N).
 sub(s(N), s(M), Y) :- sub(N, M, Y).
 
-% if Y > X &&  have negative numbers s
+% if Y > X && X - Y is negative, then X is the remainder.
 div(R, Y, Z, R) :- not(sub(R, Y, _)), is_number(Z).
 
 div(X, Y, s(Z), R) :- sub(X, Y, Q), div(Q, Y, Z, R).
