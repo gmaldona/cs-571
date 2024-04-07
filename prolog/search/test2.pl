@@ -1,6 +1,6 @@
 
-consult(scenario2).
-consult(search).
+:- consult(scenario2).
+:- consult(search).
 
 
 % Example execution

@@ -1,5 +1,5 @@
-consult(scenario1).
-consult(search).
+:- consult(scenario1).
+:- consult(search).
 
 % Example execution
 % swipl test1.pl
