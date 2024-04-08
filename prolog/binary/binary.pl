@@ -49,25 +49,15 @@ rtree(
 %%%%%%%%%%%%%%%%%
 % Your code here:
 %%%%%%%%%%%%%%%%%
-% rotateLeft(T1, T2) :- ???
+rotateRight(tree(K, V, tree(LK, LV, LL, LR), R), T2) :- 
+  T2 = tree(LK, LV, LL, tree(K, V, LR, R)).
+
+rotateLeft(tree(K, V, L, tree(RK, RV, RL, RR)), T2) :- 
+  T2 = tree(RK, RV, tree(K, V, L, RL), RR).
 
 % Example execution:
 % ?- ltree(T1), rotateRight(T1, T2).
 % T1 = tree(3, c, tree(2, b, tree(1, a, empty, empty), empty), empty),
-
-% T1
-%           3 : c
-%       2 : b   none
-%   1 : a          none
-% none none
-
-% rotateRight(T1, T2)
-
-% T2
-% 
-%     2 : b
-% 1 : a   3 : c
-
 % T2 = tree(2, b, tree(1, a, empty, empty), tree(3, c, empty, empty)).
 % ?- rtree(T1), rotateLeft(T1, T2).
 % T1 = tree(1, a, empty, tree(2, b, empty, tree(3, c, empty, empty))),
