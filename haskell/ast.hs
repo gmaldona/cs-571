@@ -1,10 +1,27 @@
 data Expr = Plus Expr Expr | Minus Expr Expr | Times Expr Expr | Div Expr Expr
     | Literal Float
 
-
-
 eval :: Expr -> Float
-eval = ???
+
+eval (Div a b) =
+    let x = (eval a) / (eval b) in
+        x
+
+eval (Times a b) =
+    let x = (eval a) * (eval b) in
+        x 
+
+eval (Minus a b) =
+    let x = (eval a) - (eval b) in
+        x
+
+eval (Plus a b)  = 
+    let x = (eval a) + (eval b) in
+        x
+
+eval (Literal x) = x
+
+-- eval Plus Expr1 Expr2 = eval Expr2 + eval Expr2
 
 -- Should output "5.0"
 test1 = 
@@ -22,7 +39,10 @@ test3 =
     eval input
 
 equals :: Expr -> Expr -> Bool
-equals = ???
+equals e1 e2 = 
+    let x = eval e1 in 
+        let y = eval e2 in
+            x == y
 
 -- Should output "True"
 test4 =
