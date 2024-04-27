@@ -53,7 +53,7 @@ test1 =
     runBankOp bankOp)
 
 
--- -- Should output "(200,-100)"
+-- Should output "(200,-100)"
 test2 = 
     (let bankOp = do
             deposit 100.0
