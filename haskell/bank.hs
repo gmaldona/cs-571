@@ -28,8 +28,14 @@ deposit :: Double -> BankOp Double
 deposit x = BankOp (\b -> (b + x, b + x))
 
 withdraw :: Double -> BankOp Double
-withdraw x = BankOp(\b -> (b - x, b - x))
-
+withdraw x = BankOp(\b -> 
+   let b' = b - x in
+   let overdrawn = b' < 0 in 
+   if overdrawn then
+      if b' >= -100 then (x, b') else (b + 100, -100)
+   else
+      (x, b') )
+   
 getBalance :: BankOp Double
 getBalance =  BankOp(\b -> (b, b))
 
